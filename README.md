@@ -1,7 +1,7 @@
 - 👋 Hi, I’m @Kreios7
 - 👀 I’m interested in programming and music
-- 🌱 I’m currently learning html, javascript, css and php
-- 💞️ I’m looking to collaborate on a forum app
+- 🌱 I’m currently learning html, javascript, swift and python
+- 💞️ I’m looking to collaborate 
 - 📫 How to reach me ...
 
 <!---
