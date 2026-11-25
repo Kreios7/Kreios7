@@ -39,6 +39,14 @@ It can also be hosted as-is on GitHub Pages or any static host.
 - Safer gambling page: reality-check reminders and take-a-break (24h / 7d / 30d, can't be cancelled early)
 - Partner slot for licensed Australian bookmakers, sportsbook only, configured in `js/config.js` and disabled until you're approved. Never add online casinos or offshore operators — promoting them to Australians is illegal under the Interactive Gambling Act 2001
 
+**Demo credit store** (simulated, no payment taken)
+- Four coin packs priced in AUD with GST shown; a two-step "Simulate purchase" confirmation; no card details are ever collected
+- Player-set daily and monthly spending limits (default $50 / $200, max $1,000). Lowering applies at once; raising takes 24 hours
+- Purchase history and running totals; purchases blocked during a break; spend shown in reality checks
+- Free credits stay available so nobody has to pay to keep playing
+- While `storeEnabled` is on in `js/config.js`, the bookmaker partner slot is switched off so paid credits and real-money referrals are never mixed
+- Going live would need accounts, server-side balances and game results, an approved payment processor and legal review
+
 **Account**
 - Starts with 1,000 credits; free top-ups when the balance drops under 500
 - Bet history with staked/returned/net stats
@@ -61,7 +69,8 @@ js/mines.js
 js/dice.js
 js/videopoker.js
 js/sports.js      fixtures, odds, bet slip, settlement
-js/app.js         routing (#home, #casino-<game>, #sports, #history, #safer)
+js/store.js       demo credit store, spending limits, purchase history
+js/app.js         routing (#home, #casino-<game>, #sports, #store, #history, #safer)
 ```
 
 ## Real odds (next step)

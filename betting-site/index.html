@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="demo-banner">Free-to-play only. Credits have no cash value and can't be bought, withdrawn or exchanged for prizes. 18+.</div>
+  <div class="demo-banner">Demo only: store purchases are simulated and no money is charged. Credits have no cash value and can't be withdrawn, transferred or exchanged for prizes. 18+.</div>
   <div class="break-banner" id="break-banner" hidden>You're on a break until <strong id="break-until"></strong>. Betting is paused.</div>
 
   <header class="topbar">
@@ -16,6 +16,7 @@
       <a href="#home" data-nav="home">Home</a>
       <a href="#casino" data-nav="casino">Casino</a>
       <a href="#sports" data-nav="sports">Sports</a>
+      <a href="#store" data-nav="store">Store</a>
       <a href="#history" data-nav="history">History</a>
       <a href="#safer" data-nav="safer">Safer gambling</a>
     </nav>
@@ -256,6 +257,34 @@
       <button class="btn btn-small" id="reset">Reset account</button>
     </section>
 
+    <!-- STORE (demo) -->
+    <section id="view-store" class="view" hidden>
+      <h2>Credit store</h2>
+      <p class="sample-note"><strong>Demo store.</strong> Purchases are simulated: no payment details are collected and no money is charged. Credits have no cash value and can't be withdrawn, transferred or exchanged for prizes. You can always keep playing for free with free credits.</p>
+      <div class="store-layout">
+        <div>
+          <div class="packs" id="store-packs"></div>
+          <h3 class="mt">Purchase history</h3>
+          <table class="history">
+            <thead><tr><th>Date</th><th>Pack</th><th>Price</th></tr></thead>
+            <tbody id="purchase-body"></tbody>
+          </table>
+          <p class="muted">Total spent: <strong id="purchase-total">A$0.00</strong></p>
+        </div>
+        <aside class="safer-card">
+          <h3>Spending limits</h3>
+          <div id="limit-usage"></div>
+          <div class="limit-fields">
+            <label class="field">Daily (A$) <input type="number" id="limit-daily" min="0" max="1000" step="1"></label>
+            <label class="field">Monthly (A$) <input type="number" id="limit-monthly" min="0" max="1000" step="1"></label>
+          </div>
+          <button class="btn" id="limit-save">Save limits</button>
+          <p class="muted small">Lowering a limit applies straight away. Raising one takes 24 hours.</p>
+          <p class="muted small" id="limit-pending"></p>
+        </aside>
+      </div>
+    </section>
+
     <!-- SAFER GAMBLING -->
     <section id="view-safer" class="view" hidden>
       <h2>Safer gambling</h2>
@@ -293,7 +322,7 @@
         </div>
         <div class="safer-card">
           <h3>About this site</h3>
-          <p>Kreios Bet is free to play. Credits can't be bought, withdrawn, transferred or exchanged for prizes.</p>
+          <p>Kreios Bet is free to play. The store is a demo: purchases are simulated and no money is charged. Credits can never be withdrawn, transferred or exchanged for prizes.</p>
           <p>Online casino games such as slots, roulette and blackjack can't legally be offered for real money in Australia. The casino section here is for entertainment only and never links to real-money casinos.</p>
           <p>The sportsbook uses sample fixtures and odds for practice.</p>
         </div>
@@ -323,6 +352,23 @@
     </div>
   </div>
 
+  <!-- Demo checkout -->
+  <div class="overlay" id="checkout" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+      <h2 id="checkout-title">Confirm demo purchase</h2>
+      <div class="checkout-lines">
+        <div><span>Pack</span><strong id="checkout-credits"></strong></div>
+        <div><span>Price</span><strong id="checkout-price"></strong></div>
+        <div><span>GST included</span><span id="checkout-gst"></span></div>
+      </div>
+      <p class="muted small">This is a demo. No payment details are collected and no money will be charged. Credits have no cash value.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="checkout-confirm">Simulate purchase</button>
+        <button class="btn" id="checkout-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Reality check -->
   <div class="overlay" id="reality" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reality-title">
@@ -347,6 +393,7 @@
   <script src="js/dice.js"></script>
   <script src="js/videopoker.js"></script>
   <script src="js/sports.js"></script>
+  <script src="js/store.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -2,14 +2,16 @@
 const Wallet = (() => {
   const KEY = 'kreiosbet:v1';
   const START = 1000;
+  // Default spending limits for the demo store, in AUD. Players can lower them at once; raising waits 24 hours.
+  const fresh = () => ({ balance: START, history: [], openBets: [], purchases: [], limits: { daily: 50, monthly: 200, pending: null } });
   let state = load();
 
   function load() {
     try {
       const s = JSON.parse(localStorage.getItem(KEY));
-      if (s && typeof s.balance === 'number') return s;
+      if (s && typeof s.balance === 'number') return { ...fresh(), ...s };
     } catch (e) { /* storage unavailable */ }
-    return { balance: START, history: [], openBets: [] };
+    return fresh();
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
@@ -22,6 +24,9 @@ const Wallet = (() => {
     get balance() { return state.balance; },
     get history() { return state.history; },
     get openBets() { return state.openBets; },
+    get purchases() { return state.purchases; },
+    get limits() { return state.limits; },
+    save,
     onChange(fn) { listeners.push(fn); },
 
     // Deduct a stake. Returns false if insufficient funds / invalid.
@@ -46,11 +51,18 @@ const Wallet = (() => {
       save();
     },
     saveOpenBets() { save(); },
+    // Demo store purchase: no payment is taken, credits are simply added.
+    purchase(pack) {
+      state.purchases.unshift({ t: Date.now(), credits: pack.credits, price: pack.price });
+      state.balance = Math.round((state.balance + pack.credits) * 100) / 100;
+      emit('up');
+    },
     topUp() {
       if (state.balance >= 500) { UI.toast('Free credits are available when balance is under 500'); return; }
       state.balance += 1000; emit('up'); UI.toast('+1,000 free credits');
     },
-    reset() { state = { balance: START, history: [], openBets: [] }; emit(); },
+    // Reset clears balance and bets but keeps purchase history and limits, like a real account would.
+    reset() { state = { ...fresh(), purchases: state.purchases, limits: state.limits }; emit(); },
   };
 })();
 

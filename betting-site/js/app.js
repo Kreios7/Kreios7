@@ -1,6 +1,6 @@
 (() => {
   const $ = id => document.getElementById(id);
-  const VIEWS = ['home', 'casino', 'sports', 'history', 'safer'];
+  const VIEWS = ['home', 'casino', 'sports', 'store', 'history', 'safer'];
   const GAMES = ['slots', 'blackjack', 'roulette', 'crash', 'plinko', 'mines', 'dice', 'poker'];
 
   function renderBalance(_, dir) {
@@ -43,6 +43,7 @@
     if (v === 'casino') showGame(GAMES.includes(game) ? game : document.querySelector('#casino-tabs .active')?.dataset.game || 'slots');
     if (v === 'sports') Sports.renderAll();
     if (v === 'history') renderHistory();
+    if (v === 'store') Store.render();
     window.scrollTo(0, 0);
   }
 
@@ -53,6 +54,7 @@
     Plinko.init(); Mines.init(); Dice.init(); VideoPoker.init();
     Sports.init();
     Compliance.init();
+    Store.init();
 
     $('casino-tabs').addEventListener('click', e => {
       const b = e.target.closest('[data-game]');

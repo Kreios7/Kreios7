@@ -10,6 +10,11 @@ const CONFIG = {
   // Do NOT add sign-up bonus or "bonus bet" wording: inducements are restricted in NSW and other states.
   partners: [],
 
+  // Demo coin store (simulated purchases only — no payment is taken).
+  // While the store is enabled, the bookmaker partner slot is switched off: selling simulated gambling and
+  // referring the same players to real-money bookmakers shouldn't be combined.
+  storeEnabled: true,
+
   // Show a disabled placeholder where partner links would go (useful while developing; set false for launch).
   showPartnerPlaceholder: true,
 };

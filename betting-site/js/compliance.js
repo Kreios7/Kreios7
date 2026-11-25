@@ -68,8 +68,10 @@ const Compliance = (() => {
       const mins = Math.round((Date.now() - sessionStart) / 60000);
       const h = Wallet.history.filter(r => r.t >= sessionStart);
       const net = h.reduce((a, r) => a + r.ret - r.stake, 0);
+      const spent = typeof Store !== 'undefined' ? Store.spentSince(sessionStart) : 0;
       $('reality-text').textContent =
-        `You've been playing for ${mins} minute${mins === 1 ? '' : 's'}. This session: ${h.length} bets, net ${net >= 0 ? '+' : ''}${UI.fmt(net)} credits.`;
+        `You've been playing for ${mins} minute${mins === 1 ? '' : 's'}. This session: ${h.length} bets, net ${net >= 0 ? '+' : ''}${UI.fmt(net)} credits` +
+        (spent ? `, and ${spent.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })} spent in the demo store.` : '.');
       $('reality').hidden = false;
     }, state.reality * 60000);
   }
@@ -82,6 +84,7 @@ const Compliance = (() => {
   function renderPartners() {
     const el = $('partner-slot');
     const p = CONFIG.partners;
+    if (CONFIG.storeEnabled) { el.innerHTML = ''; return; } // never mix paid credits with bookmaker referrals
     if (!p.length) {
       el.innerHTML = CONFIG.showPartnerPlaceholder
         ? `<div class="partner placeholder"><span class="ad-label">Partner slot · disabled</span>
@@ -121,6 +124,11 @@ const Compliance = (() => {
   return {
     init,
     // Called by Wallet.stake before any bet is accepted.
+    canPurchase() {
+      if (!state.ageOk) { showAgeGate(); return false; }
+      if (onBreak()) { UI.toast(`Purchases are paused during your break (until ${fmtDate(state.breakUntil)})`); return false; }
+      return true;
+    },
     canPlay() {
       if (!state.ageOk) { showAgeGate(); return false; }
       if (onBreak()) { UI.toast(`You're on a break until ${fmtDate(state.breakUntil)}`); return false; }
