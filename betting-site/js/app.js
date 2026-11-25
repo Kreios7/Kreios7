@@ -36,7 +36,7 @@
   }
 
   function route() {
-    const [view, game] = (location.hash.slice(1) || 'home').split('/');
+    const [view, game] = (location.hash.slice(1) || 'home').split('-');
     const v = VIEWS.includes(view) ? view : 'home';
     VIEWS.forEach(x => { $('view-' + x).hidden = x !== v; });
     document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === v));
@@ -53,11 +53,22 @@
 
     $('casino-tabs').addEventListener('click', e => {
       const b = e.target.closest('[data-game]');
-      if (b) location.hash = 'casino/' + b.dataset.game;
+      if (b) location.hash = 'casino-' + b.dataset.game;
     });
     $('topup').addEventListener('click', () => Wallet.topUp());
-    $('reset').addEventListener('click', () => {
-      if (confirm('Reset balance to 1,000 and clear history?')) { Wallet.reset(); renderHistory(); Sports.renderAll(); }
+    // two-step confirm (browser confirm() dialogs are blocked in some embeds)
+    $('reset').addEventListener('click', e => {
+      const btn = e.currentTarget;
+      if (!btn.dataset.armed) {
+        btn.dataset.armed = '1';
+        btn.textContent = 'Click again to reset balance and clear history';
+        setTimeout(() => { delete btn.dataset.armed; btn.textContent = 'Reset account'; }, 4000);
+        return;
+      }
+      delete btn.dataset.armed;
+      btn.textContent = 'Reset account';
+      Wallet.reset(); renderHistory(); Sports.renderAll();
+      UI.toast('Account reset to 1,000 credits');
     });
     window.addEventListener('hashchange', route);
     route();
