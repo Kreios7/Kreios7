@@ -273,3 +273,85 @@ table.history { width: 100%; border-collapse: collapse; background: var(--panel)
   .odd { flex: 1; min-width: 0; }
   .history th:nth-child(3), .history td:nth-child(3) { display: none; }
 }
+
+/* ---------- Added games ---------- */
+select {
+  background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 10px; font-size: 14px;
+}
+
+/* Plinko */
+.plinko-wrap { max-width: 640px; margin: 0 auto; }
+#plinko-canvas { width: 100%; height: auto; display: block; }
+.plinko-bins { display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; padding: 0 calc(100% / 28); }
+.pbin {
+  font-size: clamp(8px, 1.6vw, 12px); font-weight: 800; text-align: center; padding: 6px 0; border-radius: 4px;
+  color: #1a1300; background: color-mix(in srgb, var(--red) calc(var(--heat) * 100%), var(--gold));
+  transition: transform .15s; font-variant-numeric: tabular-nums;
+}
+.pbin.hit { transform: translateY(5px); box-shadow: 0 0 12px var(--gold); }
+
+/* Mines */
+.mines-layout { display: grid; grid-template-columns: minmax(0, 420px) 1fr; gap: 24px; align-items: start; }
+.mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.mtile {
+  aspect-ratio: 1; max-width: 100%; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-2);
+  font-size: clamp(20px, 5vw, 32px); cursor: pointer; color: var(--text); transition: transform .1s, background .15s;
+}
+.mtile:not(:disabled):hover { transform: translateY(-2px); background: #2a3442; }
+.mtile:disabled { cursor: default; }
+.mtile.gem { background: #123d24; border-color: var(--accent); }
+.mtile.boom { background: #4a1414; border-color: var(--red); animation: shake .3s; }
+.mtile.dim { opacity: .45; }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.mines-controls { margin-top: 0; }
+.mines-stats, .dice-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mines-stats div, .dice-stats > div { background: var(--panel-2); border-radius: 8px; padding: 10px; min-width: 0; }
+.mines-stats small, .dice-stats small { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+.mines-stats strong, .dice-stats strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+
+/* Dice */
+.dice-roll { text-align: center; font-size: clamp(44px, 10vw, 72px); font-weight: 900; font-variant-numeric: tabular-nums; }
+.dice-roll.win { color: var(--accent); }
+.dice-roll.lose { color: var(--red); }
+.dice-track { position: relative; margin: 16px 0 24px; }
+#dice-target {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 12px; border-radius: 999px; outline: none;
+  background: linear-gradient(90deg, var(--accent) var(--split, 50%), var(--red) var(--split, 50%));
+}
+#dice-target.over { background: linear-gradient(90deg, var(--red) var(--split, 50%), var(--accent) var(--split, 50%)); }
+#dice-target::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 6px; background: var(--text); cursor: grab; border: 3px solid var(--bg); }
+#dice-target::-moz-range-thumb { width: 22px; height: 22px; border-radius: 6px; background: var(--text); cursor: grab; border: 3px solid var(--bg); }
+#dice-target:focus-visible { box-shadow: 0 0 0 3px var(--gold); }
+.dice-marker { position: absolute; top: -14px; width: 4px; height: 40px; border-radius: 2px; opacity: 0; transition: left .3s; pointer-events: none; }
+.dice-marker.show { opacity: 1; }
+.dice-marker.win { background: var(--accent); }
+.dice-marker.lose { background: var(--red); }
+.dice-dir { margin: 0; }
+
+/* Video poker */
+.vp-hand { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+.vp-slot { background: none; border: none; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); }
+.vp-slot:disabled { cursor: default; }
+.vp-slot .pcard { width: 84px; height: 120px; font-size: 20px; }
+.vp-slot .pcard .suit-big { font-size: 38px; }
+.vp-slot.held .pcard { transform: translateY(-8px); box-shadow: 0 0 0 3px var(--gold); }
+.vp-held { font-size: 12px; font-weight: 900; color: var(--gold); min-height: 1em; letter-spacing: 1px; }
+.vp-hint { text-align: center; }
+.vp-paytable { width: 100%; max-width: 420px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.vp-paytable td { padding: 5px 10px; border-bottom: 1px solid var(--border); }
+.vp-paytable td:nth-child(n+2) { text-align: right; color: var(--gold); }
+.vp-paytable tr.hit td { background: var(--gold); color: #1a1300; font-weight: 800; }
+
+@media (max-width: 760px) {
+  .mines-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .vp-hand { gap: 6px; }
+  .vp-slot .pcard { width: 56px; height: 82px; font-size: 15px; padding: 4px; }
+  .vp-slot .pcard .suit-big { font-size: 24px; }
+  .mines-stats strong, .dice-stats strong { font-size: 15px; }
+}
+.vp-slot .pcard { animation: none; }
+.vp-hand.fresh .pcard { animation: deal .25s ease-out; }
+.toast:not(.show) { visibility: hidden; transition: transform .25s, visibility 0s .25s; }

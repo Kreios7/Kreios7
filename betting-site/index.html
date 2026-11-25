@@ -40,6 +40,10 @@
         <a class="card" href="#casino-blackjack" data-game="blackjack"><div class="card-icon">🃏</div><h3>Blackjack</h3><p>Blackjack pays 3:2</p></a>
         <a class="card" href="#casino-roulette" data-game="roulette"><div class="card-icon">🎡</div><h3>Roulette</h3><p>European single-zero wheel</p></a>
         <a class="card" href="#casino-crash" data-game="crash"><div class="card-icon">🚀</div><h3>Crash</h3><p>Cash out before it busts</p></a>
+        <a class="card" href="#casino-plinko" data-game="plinko"><div class="card-icon">🔻</div><h3>Plinko</h3><p>Drop a ball, hit up to 170×</p></a>
+        <a class="card" href="#casino-mines" data-game="mines"><div class="card-icon">💣</div><h3>Mines</h3><p>Find gems, dodge the mines</p></a>
+        <a class="card" href="#casino-dice" data-game="dice"><div class="card-icon">🎲</div><h3>Dice</h3><p>Set your own odds</p></a>
+        <a class="card" href="#casino-poker" data-game="poker"><div class="card-icon">♠️</div><h3>Video Poker</h3><p>Jacks or Better, 9/6 paytable</p></a>
         <a class="card" href="#sports" data-nav="sports"><div class="card-icon">⚽</div><h3>Sportsbook</h3><p>Singles & parlays, live results</p></a>
       </div>
     </section>
@@ -51,6 +55,10 @@
         <button data-game="blackjack">🃏 Blackjack</button>
         <button data-game="roulette">🎡 Roulette</button>
         <button data-game="crash">🚀 Crash</button>
+        <button data-game="plinko">🔻 Plinko</button>
+        <button data-game="mines">💣 Mines</button>
+        <button data-game="dice">🎲 Dice</button>
+        <button data-game="poker">♠️ Video Poker</button>
       </div>
 
       <!-- Slots -->
@@ -122,6 +130,89 @@
         <p class="result" id="crash-result"></p>
         <div class="crash-history" id="crash-history"></div>
       </div>
+
+      <!-- Plinko -->
+      <div class="game" id="game-plinko" hidden>
+        <h2>Plinko</h2>
+        <div class="plinko-wrap">
+          <canvas id="plinko-canvas" width="640" height="520"></canvas>
+          <div class="plinko-bins" id="plinko-bins"></div>
+        </div>
+        <div class="controls">
+          <label>Bet <input type="number" id="plinko-bet" min="1" value="10"></label>
+          <label>Risk
+            <select id="plinko-risk">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </label>
+          <button class="btn btn-primary" id="plinko-drop">Drop ball</button>
+        </div>
+        <p class="result" id="plinko-result"></p>
+      </div>
+
+      <!-- Mines -->
+      <div class="game" id="game-mines" hidden>
+        <h2>Mines</h2>
+        <div class="mines-layout">
+          <div class="mines-grid" id="mines-grid"></div>
+          <div class="mines-side">
+            <div class="controls mines-controls">
+              <label>Bet <input type="number" id="mines-bet" min="1" value="10"></label>
+              <label>Mines <input type="number" id="mines-count" min="1" max="24" value="3"></label>
+              <button class="btn btn-primary" id="mines-start">Start game</button>
+              <button class="btn btn-gold" id="mines-cashout" disabled>Cash out</button>
+            </div>
+            <div class="mines-stats">
+              <div><small>Current multiplier</small><strong id="mines-mult">1.00×</strong></div>
+              <div><small>Next tile</small><strong id="mines-next">—</strong></div>
+              <div><small>Cash-out value</small><strong id="mines-value">—</strong></div>
+            </div>
+            <p class="muted">Reveal gems to raise the multiplier. Hit a mine and you lose the stake.</p>
+          </div>
+        </div>
+        <p class="result" id="mines-result"></p>
+      </div>
+
+      <!-- Dice -->
+      <div class="game" id="game-dice" hidden>
+        <h2>Dice</h2>
+        <div class="dice-roll" id="dice-roll">50.00</div>
+        <div class="dice-track">
+          <input type="range" id="dice-target" min="2" max="98" step="1" value="50" aria-label="Target number">
+          <div class="dice-marker" id="dice-marker"></div>
+        </div>
+        <div class="dice-stats">
+          <div><small>Roll</small>
+            <div class="slip-mode dice-dir">
+              <button data-dir="under" class="active">Under <span id="dice-target-label">50</span></button>
+              <button data-dir="over">Over <span id="dice-target-label2">50</span></button>
+            </div>
+          </div>
+          <div><small>Win chance</small><strong id="dice-chance">50%</strong></div>
+          <div><small>Payout</small><strong id="dice-payout">1.98×</strong></div>
+        </div>
+        <div class="controls">
+          <label>Bet <input type="number" id="dice-bet" min="1" value="10"></label>
+          <button class="btn btn-primary" id="dice-go">Roll</button>
+        </div>
+        <p class="result" id="dice-result"></p>
+        <div class="crash-history" id="dice-history"></div>
+      </div>
+
+      <!-- Video Poker -->
+      <div class="game" id="game-poker" hidden>
+        <h2>Video Poker · Jacks or Better</h2>
+        <div class="vp-hand" id="vp-hand"></div>
+        <p class="muted vp-hint" id="vp-hint">Press Deal to get five cards.</p>
+        <div class="controls">
+          <label>Bet <input type="number" id="vp-bet" min="1" value="10"></label>
+          <button class="btn btn-primary" id="vp-deal">Deal</button>
+        </div>
+        <p class="result" id="vp-result"></p>
+        <table class="vp-paytable" id="vp-paytable"></table>
+      </div>
     </section>
 
     <!-- SPORTS -->
@@ -172,6 +263,10 @@
   <script src="js/blackjack.js"></script>
   <script src="js/roulette.js"></script>
   <script src="js/crash.js"></script>
+  <script src="js/plinko.js"></script>
+  <script src="js/mines.js"></script>
+  <script src="js/dice.js"></script>
+  <script src="js/videopoker.js"></script>
   <script src="js/sports.js"></script>
   <script src="js/app.js"></script>
 </body>

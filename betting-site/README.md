@@ -20,6 +20,10 @@ It can also be hosted as-is on GitHub Pages or any static host.
 - 🃏 **Blackjack** — 6-deck shoe, hit/stand/double, dealer stands on 17, blackjack pays 3:2
 - 🎡 **Roulette** — European single-zero board, straight-up (35:1), dozens/columns (2:1), red/black/odd/even/high/low (1:1). Left-click places a chip, right-click removes it
 - 🚀 **Crash** — rising multiplier with manual or auto cash-out, 1% house edge
+- 🔻 **Plinko** — 12-row board with low / medium / high risk tables (up to 170×), ~99% RTP
+- 💣 **Mines** — 5×5 grid, pick 1–24 mines, cash out any time, ~99% RTP
+- 🎲 **Dice** — set a target and roll over or under it; payout = 99 ÷ win chance
+- ♠️ **Video Poker** — Jacks or Better with the 9/6 paytable, hold and draw
 
 **Sportsbook**
 - Soccer (1X2), basketball, American football, tennis and ice hockey with fictional teams
@@ -42,8 +46,12 @@ js/slots.js
 js/blackjack.js
 js/roulette.js
 js/crash.js
+js/plinko.js
+js/mines.js
+js/dice.js
+js/videopoker.js
 js/sports.js      fixtures, odds, bet slip, settlement
-js/app.js         routing (#home, #casino/<game>, #sports, #history)
+js/app.js         routing (#home, #casino-<game>, #sports, #history)
 ```
 
 ## Note on real-money operation

@@ -1,7 +1,7 @@
 (() => {
   const $ = id => document.getElementById(id);
   const VIEWS = ['home', 'casino', 'sports', 'history'];
-  const GAMES = ['slots', 'blackjack', 'roulette', 'crash'];
+  const GAMES = ['slots', 'blackjack', 'roulette', 'crash', 'plinko', 'mines', 'dice', 'poker'];
 
   function renderBalance(_, dir) {
     const el = $('balance');
@@ -49,7 +49,9 @@
   document.addEventListener('DOMContentLoaded', () => {
     Wallet.onChange(renderBalance);
     renderBalance();
-    Slots.init(); Blackjack.init(); Roulette.init(); Crash.init(); Sports.init();
+    Slots.init(); Blackjack.init(); Roulette.init(); Crash.init();
+    Plinko.init(); Mines.init(); Dice.init(); VideoPoker.init();
+    Sports.init();
 
     $('casino-tabs').addEventListener('click', e => {
       const b = e.target.closest('[data-game]');
