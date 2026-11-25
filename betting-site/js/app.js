@@ -1,6 +1,6 @@
 (() => {
   const $ = id => document.getElementById(id);
-  const VIEWS = ['home', 'casino', 'sports', 'history'];
+  const VIEWS = ['home', 'casino', 'sports', 'history', 'safer'];
   const GAMES = ['slots', 'blackjack', 'roulette', 'crash', 'plinko', 'mines', 'dice', 'poker'];
 
   function renderBalance(_, dir) {
@@ -52,6 +52,7 @@
     Slots.init(); Blackjack.init(); Roulette.init(); Crash.init();
     Plinko.init(); Mines.init(); Dice.init(); VideoPoker.init();
     Sports.init();
+    Compliance.init();
 
     $('casino-tabs').addEventListener('click', e => {
       const b = e.target.closest('[data-game]');

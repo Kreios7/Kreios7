@@ -1,27 +1,33 @@
 const Sports = (() => {
   const $ = id => document.getElementById(id);
-  const KEY = 'kreiosbet:fixtures:v1';
+  const KEY = 'kreiosbet:fixtures:v2';
   const MARGIN = 1.06; // bookmaker overround
 
-  // Fictional teams with strength ratings
+  // Australian competitions. Fixtures, ratings and odds are SAMPLE data, not real markets.
+  // Head-to-head markets are 2-way except soccer (1X2), matching how AU bookmakers price them.
   const SPORTS = {
+    afl: { name: 'AFL', icon: '🏉', draw: false, leagues: {
+      'AFL Premiership': ['Adelaide', 'Brisbane Lions', 'Carlton', 'Collingwood', 'Essendon', 'Fremantle', 'Geelong', 'Gold Coast',
+        'GWS Giants', 'Hawthorn', 'Melbourne', 'North Melbourne', 'Port Adelaide', 'Richmond', 'St Kilda', 'Sydney', 'West Coast', 'Western Bulldogs'],
+    }},
+    nrl: { name: 'NRL', icon: '🏉', draw: false, leagues: {
+      'NRL Telstra Premiership': ['Broncos', 'Raiders', 'Bulldogs', 'Sharks', 'Dolphins', 'Titans', 'Sea Eagles', 'Storm',
+        'Knights', 'Cowboys', 'Eels', 'Panthers', 'Rabbitohs', 'Dragons', 'Roosters', 'Warriors', 'Wests Tigers'],
+    }},
+    cricket: { name: 'Cricket', icon: '🏏', draw: false, leagues: {
+      'Big Bash League': ['Adelaide Strikers', 'Brisbane Heat', 'Hobart Hurricanes', 'Melbourne Renegades',
+        'Melbourne Stars', 'Perth Scorchers', 'Sydney Sixers', 'Sydney Thunder'],
+    }},
     soccer: { name: 'Soccer', icon: '⚽', draw: true, leagues: {
-      'Premier Division': ['Northbridge FC', 'Harbor City', 'Redmoor United', 'Kingsvale', 'Ashford Rovers', 'Westgate Athletic', 'Lionsford', 'Stormhaven'],
-      'Continental League': ['Real Montoro', 'Sporting Avelar', 'FC Lindenau', 'Olympique Rives', 'Dynamo Kressk', 'Inter Valera'],
+      'A-League Men': ['Adelaide United', 'Auckland FC', 'Brisbane Roar', 'Central Coast Mariners', 'Macarthur FC', 'Melbourne City',
+        'Melbourne Victory', 'Newcastle Jets', 'Perth Glory', 'Sydney FC', 'Wellington Phoenix', 'Western Sydney Wanderers'],
     }},
     basketball: { name: 'Basketball', icon: '🏀', draw: false, leagues: {
-      'Pro Hoops': ['Metro Comets', 'Bay Hawks', 'Desert Suns', 'Lakeshore Giants', 'Capital Kings', 'Mountain Elk'],
-    }},
-    football: { name: 'American Football', icon: '🏈', draw: false, leagues: {
-      'Gridiron League': ['Iron Bulls', 'Coastal Sharks', 'Prairie Wolves', 'River Rangers', 'Summit Eagles', 'Delta Pirates'],
-    }},
-    tennis: { name: 'Tennis', icon: '🎾', draw: false, leagues: {
-      'World Tour': ['A. Moreau', 'K. Tanaka', 'L. Petrov', 'D. Okafor', 'M. Rossi', 'J. Lindqvist', 'S. Haddad', 'R. Alvarez'],
-    }},
-    hockey: { name: 'Ice Hockey', icon: '🏒', draw: false, leagues: {
-      'Ice League': ['Frost Wolves', 'Glacier Bears', 'Northern Lights', 'Polar Kings', 'Blizzard HC', 'Avalanche City'],
+      'NBL': ['Adelaide 36ers', 'Brisbane Bullets', 'Cairns Taipans', 'Illawarra Hawks', 'Melbourne United',
+        'New Zealand Breakers', 'Perth Wildcats', 'South East Melbourne Phoenix', 'Sydney Kings', 'Tasmania JackJumpers'],
     }},
   };
+  const MAX_GAMES_PER_LEAGUE = 5;
 
   const rating = name => { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0; return 60 + (h % 40); };
 
@@ -53,7 +59,7 @@ const Sports = (() => {
       for (const [league, teams] of Object.entries(def.leagues)) {
         const t = [...teams];
         for (let i = t.length - 1; i > 0; i--) { const j = UI.rand(i + 1); [t[i], t[j]] = [t[j], t[i]]; }
-        for (let i = 0; i + 1 < t.length; i += 2) {
+        for (let i = 0; i + 1 < t.length && i / 2 < MAX_GAMES_PER_LEAGUE; i += 2) {
           const p = probs(sport, t[i], t[i + 1]);
           const odds = {};
           for (const k in p) odds[k] = toOdds(p[k]);
@@ -71,11 +77,11 @@ const Sports = (() => {
     const pick = (lo, hi) => lo + UI.rand(hi - lo + 1);
     let a, b;
     switch (ev.sport) {
+      case 'afl': a = pick(45, 125); b = pick(45, 125); break;
+      case 'nrl': a = pick(4, 40); b = pick(4, 40); break;
+      case 'cricket': a = pick(125, 215); b = pick(125, 215); break;
       case 'soccer': a = pick(0, 4); b = pick(0, 4); break;
-      case 'basketball': a = pick(88, 128); b = pick(88, 128); break;
-      case 'football': a = pick(3, 38); b = pick(3, 38); break;
-      case 'hockey': a = pick(0, 6); b = pick(0, 6); break;
-      case 'tennis': a = 2; b = pick(0, 1); break;
+      case 'basketball': a = pick(75, 115); b = pick(75, 115); break;
     }
     if (outcome === 'draw') b = a;
     else {
@@ -83,7 +89,24 @@ const Sports = (() => {
       const [hi, lo] = a > b ? [a, b] : [b, a];
       [a, b] = outcome === 'home' ? [hi, lo] : [lo, hi];
     }
-    return { outcome, score: `${a} – ${b}` };
+    return { outcome, score: formatScore(ev.sport, a, b, outcome) };
+  }
+
+  // AFL: goals.behinds (total), e.g. 12.10 (82). Cricket: runs/wickets.
+  function aflScore(pts) {
+    let g = Math.round(pts / 6.8), bh = pts - 6 * g;
+    while (bh < 0) { g--; bh += 6; }
+    return `${g}.${bh} (${pts})`;
+  }
+  function formatScore(sport, a, b, outcome) {
+    if (sport === 'afl') return `${aflScore(a)} – ${aflScore(b)}`;
+    if (sport === 'cricket') {
+      // the losing side is usually bowled out or close to it
+      const wk = win => win ? 2 + UI.rand(6) : 6 + UI.rand(5);
+      const inns = (runs, w) => w >= 10 ? `${runs} all out` : `${runs}/${w}`;
+      return `${inns(a, wk(outcome === 'home'))} – ${inns(b, wk(outcome === 'away'))}`;
+    }
+    return `${a} – ${b}`;
   }
 
   // ---------- Rendering ----------
@@ -121,7 +144,7 @@ const Sports = (() => {
 
   function renderSlip() {
     const items = $('slip-items'), footer = $('slip-footer');
-    document.querySelectorAll('.slip-mode button').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    document.querySelectorAll('#slip-mode button').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
     if (!slip.length) { items.innerHTML = '<p class="muted">Click odds to add selections.</p>'; footer.innerHTML = ''; return; }
     items.innerHTML = slip.map((s, i) => {
       const ev = fixtures.find(f => f.id === s.eventId);
@@ -136,12 +159,12 @@ const Sports = (() => {
     if (mode === 'parlay') {
       const conflict = new Set(slip.map(s => s.eventId)).size !== slip.length;
       const total = slip.reduce((a, s) => a * s.odds, 1);
-      footer.innerHTML = `<div class="slip-summary"><span>Parlay odds</span><strong>${total.toFixed(2)}</strong></div>
+      footer.innerHTML = `<div class="slip-summary"><span>Multi odds</span><strong>${total.toFixed(2)}</strong></div>
         <label class="slip-summary"><span>Stake</span><input type="number" min="1" id="parlay-stake" value="${renderSlip.parlayStake || ''}"></label>
         <div class="slip-summary"><span>Potential return</span><strong id="parlay-ret">—</strong></div>
-        ${conflict ? '<p class="muted" style="color:var(--red)">Parlays can\'t include two picks from the same match.</p>' : ''}
-        ${slip.length < 2 ? '<p class="muted">Add at least 2 selections for a parlay.</p>' : ''}
-        <button class="btn btn-primary" id="place-bet" ${conflict || slip.length < 2 ? 'disabled' : ''}>Place parlay</button>`;
+        ${conflict ? '<p class="muted" style="color:var(--red)">Multis can\'t include two picks from the same match.</p>' : ''}
+        ${slip.length < 2 ? '<p class="muted">Add at least 2 selections for a multi.</p>' : ''}
+        <button class="btn btn-primary" id="place-bet" ${conflict || slip.length < 2 ? 'disabled' : ''}>Place multi</button>`;
     } else {
       footer.innerHTML = `<div class="slip-summary"><span>Total stake</span><strong id="single-total">0</strong></div>
         <div class="slip-summary"><span>Potential return</span><strong id="single-ret">0</strong></div>
@@ -171,7 +194,7 @@ const Sports = (() => {
     const el = $('open-bets');
     const bets = Wallet.openBets;
     if (!bets.length) { el.innerHTML = '<p class="muted">No open bets.</p>'; return; }
-    el.innerHTML = bets.map(b => `<div class="open-bet"><strong>${b.type === 'parlay' ? `${b.legs.length}-leg parlay` : b.legs[0].label}</strong>
+    el.innerHTML = bets.map(b => `<div class="open-bet"><strong>${b.type === 'parlay' ? `${b.legs.length}-leg multi` : b.legs[0].label}</strong>
       @ ${b.odds.toFixed(2)} · stake ${UI.fmt(b.stake)}<br><span class="muted">${b.legs.map(l => l.match).join(' · ')}</span></div>`).join('');
   }
 
@@ -203,12 +226,12 @@ const Sports = (() => {
       UI.toast(`${valid.length} bet${valid.length > 1 ? 's' : ''} placed`);
     } else {
       const st = Math.floor(renderSlip.parlayStake);
-      if (!(st > 0)) return UI.toast('Enter a parlay stake');
+      if (!(st > 0)) return UI.toast('Enter a stake for the multi');
       if (!Wallet.stake(st)) return;
       const odds = Math.round(slip.reduce((a, s) => a * s.odds, 1) * 100) / 100;
       Wallet.openBets.push({ id: Date.now(), type: 'parlay', legs: slip.map(mk), odds, stake: st });
       slip = []; renderSlip.parlayStake = '';
-      UI.toast('Parlay placed');
+      UI.toast('Multi placed');
     }
     Wallet.saveOpenBets();
     renderAll();
@@ -229,7 +252,7 @@ const Sports = (() => {
       const ret = win ? Math.round(b.stake * b.odds * 100) / 100 : 0;
       if (win) { won++; paid += ret; Wallet.credit(ret); } else lost++;
       const desc = b.legs.map((l, i) => `${l.label} (${evs[i].score})`).join(' + ');
-      Wallet.record(b.type === 'parlay' ? `Parlay ×${b.legs.length}` : 'Sports', desc + ` @ ${b.odds.toFixed(2)}`, b.stake, ret);
+      Wallet.record(b.type === 'parlay' ? `Multi ×${b.legs.length}` : 'Sports', desc + ` @ ${b.odds.toFixed(2)}`, b.stake, ret);
     }
     Wallet.openBets.length = 0;
     Wallet.openBets.push(...remaining);
@@ -275,12 +298,30 @@ const Sports = (() => {
     if (slip.some(s => s.eventId === ev.id && s.pick === k)) renderSlip();
   }
 
+  // Bets on fixtures that no longer exist (e.g. after the fixture list changes) are voided and refunded.
+  function voidOrphanBets() {
+    const ids = new Set(fixtures.map(f => f.id));
+    const keep = [];
+    let refunded = 0;
+    for (const b of Wallet.openBets) {
+      if (b.legs.every(l => ids.has(l.eventId))) { keep.push(b); continue; }
+      refunded += b.stake;
+      Wallet.record('Sports', `Void: ${b.legs.map(l => l.label).join(' + ')} (fixture removed)`, b.stake, b.stake);
+    }
+    if (!refunded) return;
+    Wallet.openBets.length = 0;
+    Wallet.openBets.push(...keep);
+    Wallet.credit(refunded);
+    Wallet.saveOpenBets();
+  }
+
   function init() {
     load();
+    voidOrphanBets();
     if (fixtures.every(f => f.status === 'settled')) { $('simulate').textContent = '↻ Load next fixtures'; $('simulate').dataset.next = '1'; }
     $('sport-list').addEventListener('click', e => { const b = e.target.closest('[data-sport]'); if (b) { filter = b.dataset.sport; renderSportList(); renderEvents(); } });
     $('events').addEventListener('click', e => { const b = e.target.closest('.odd'); if (b && !b.disabled) toggleSelection(b.dataset.ev, b.dataset.pick); });
-    document.querySelector('.slip-mode').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (b) { mode = b.dataset.mode; renderSlip(); } });
+    $('slip-mode').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (b) { mode = b.dataset.mode; renderSlip(); } });
     $('slip-items').addEventListener('click', e => { const b = e.target.closest('[data-remove]'); if (b) { slip.splice(+b.dataset.remove, 1); renderEvents(); renderSlip(); } });
     $('slip-items').addEventListener('input', e => { if (e.target.dataset.stake != null) { slip[+e.target.dataset.stake].stake = e.target.value; updateReturns(); } });
     $('slip-footer').addEventListener('input', e => { if (e.target.id === 'parlay-stake') { renderSlip.parlayStake = e.target.value; updateReturns(); } });

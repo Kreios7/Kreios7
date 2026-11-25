@@ -25,11 +25,19 @@ It can also be hosted as-is on GitHub Pages or any static host.
 - 🎲 **Dice** — set a target and roll over or under it; payout = 99 ÷ win chance
 - ♠️ **Video Poker** — Jacks or Better with the 9/6 paytable, hold and draw
 
-**Sportsbook**
-- Soccer (1X2), basketball, American football, tennis and ice hockey with fictional teams
-- Odds derived from team ratings with a bookmaker margin, plus live odds drift
-- Bet slip with singles and parlays
+**Sportsbook (Australia)**
+- AFL, NRL, Big Bash League cricket, A-League Men (1X2) and NBL
+- **Sample** fixtures and odds (derived from placeholder team ratings with a bookmaker margin), clearly labelled as not live markets
+- AFL scores in goals.behinds (total) format, cricket in runs/wickets
+- Bet slip with singles and multis
 - "Play next round" simulates full-time results, settles open bets and pays out
+
+**Australian compliance**
+- 18+ age gate before any play
+- Rotating national gambling taglines (e.g. "Chances are you're about to lose.")
+- Gambling Help Online (1800 858 858) and BetStop on every page
+- Safer gambling page: reality-check reminders and take-a-break (24h / 7d / 30d, can't be cancelled early)
+- Partner slot for licensed Australian bookmakers, sportsbook only, configured in `js/config.js` and disabled until you're approved. Never add online casinos or offshore operators — promoting them to Australians is illegal under the Interactive Gambling Act 2001
 
 **Account**
 - Starts with 1,000 credits; free top-ups when the balance drops under 500
@@ -41,6 +49,8 @@ It can also be hosted as-is on GitHub Pages or any static host.
 ```
 index.html
 css/styles.css
+js/config.js      partner links and site settings
+js/compliance.js  age gate, taglines, reality check, take-a-break, partner slot
 js/wallet.js      balance, history, shared UI helpers, crypto RNG
 js/slots.js
 js/blackjack.js
@@ -51,8 +61,12 @@ js/mines.js
 js/dice.js
 js/videopoker.js
 js/sports.js      fixtures, odds, bet slip, settlement
-js/app.js         routing (#home, #casino-<game>, #sports, #history)
+js/app.js         routing (#home, #casino-<game>, #sports, #history, #safer)
 ```
+
+## Real odds (next step)
+
+The sportsbook uses sample data. Real AFL/NRL/BBL/A-League/NBL odds from Australian bookmakers can come from an odds data API, but the key must stay secret, so the odds need to be fetched by a small server or scheduled job and saved as a file the site reads, not fetched directly from the browser.
 
 ## Note on real-money operation
 

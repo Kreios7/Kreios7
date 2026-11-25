@@ -26,6 +26,7 @@ const Wallet = (() => {
 
     // Deduct a stake. Returns false if insufficient funds / invalid.
     stake(amount) {
+      if (typeof Compliance !== 'undefined' && !Compliance.canPlay()) return false;
       amount = Math.floor(Number(amount));
       if (!(amount > 0)) { UI.toast('Enter a valid stake'); return false; }
       if (amount > state.balance) { UI.toast('Insufficient balance — grab free credits'); return false; }

@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="demo-banner">🎮 Demo site — play money only. No real deposits, wagers or payouts.</div>
+  <div class="demo-banner">Free-to-play only. Credits have no cash value and can't be bought, withdrawn or exchanged for prizes. 18+.</div>
+  <div class="break-banner" id="break-banner" hidden>You're on a break until <strong id="break-until"></strong>. Betting is paused.</div>
 
   <header class="topbar">
     <a class="logo" href="#home" data-nav="home">KREIOS<span>BET</span></a>
@@ -16,6 +17,7 @@
       <a href="#casino" data-nav="casino">Casino</a>
       <a href="#sports" data-nav="sports">Sports</a>
       <a href="#history" data-nav="history">History</a>
+      <a href="#safer" data-nav="safer">Safer gambling</a>
     </nav>
     <div class="wallet">
       <span class="balance-label">Balance</span>
@@ -29,7 +31,7 @@
     <section id="view-home" class="view">
       <div class="hero">
         <h1>Casino & Sportsbook</h1>
-        <p>Spin slots, beat the dealer, ride the crash multiplier, or build a parlay. You start with 1,000 free credits.</p>
+        <p>Free-play casino games and practice betting on AFL, NRL, cricket, A-League and NBL. You start with 1,000 free credits. Nothing here costs or pays real money.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#casino" data-nav="casino">Play casino</a>
           <a class="btn" href="#sports" data-nav="sports">Bet on sports</a>
@@ -44,7 +46,7 @@
         <a class="card" href="#casino-mines" data-game="mines"><div class="card-icon">💣</div><h3>Mines</h3><p>Find gems, dodge the mines</p></a>
         <a class="card" href="#casino-dice" data-game="dice"><div class="card-icon">🎲</div><h3>Dice</h3><p>Set your own odds</p></a>
         <a class="card" href="#casino-poker" data-game="poker"><div class="card-icon">♠️</div><h3>Video Poker</h3><p>Jacks or Better, 9/6 paytable</p></a>
-        <a class="card" href="#sports" data-nav="sports"><div class="card-icon">⚽</div><h3>Sportsbook</h3><p>Singles & parlays, live results</p></a>
+        <a class="card" href="#sports" data-nav="sports"><div class="card-icon">🏉</div><h3>Sportsbook</h3><p>AFL, NRL, BBL, A-League & NBL</p></a>
       </div>
     </section>
 
@@ -224,18 +226,21 @@
             <h2 id="sport-title">All sports</h2>
             <button class="btn btn-small" id="simulate">▶ Play next round of matches</button>
           </div>
+          <p class="sample-note">Sample fixtures and odds for free practice. These are not live markets, and results are simulated.</p>
           <div id="events"></div>
         </div>
         <aside class="betslip">
           <h3>Bet slip</h3>
-          <div class="slip-mode">
+          <div class="slip-mode" id="slip-mode">
             <button data-mode="single" class="active">Singles</button>
-            <button data-mode="parlay">Parlay</button>
+            <button data-mode="parlay">Multi</button>
           </div>
           <div id="slip-items"><p class="muted">Click odds to add selections.</p></div>
           <div id="slip-footer"></div>
           <h3 class="mt">Open bets</h3>
           <div id="open-bets"><p class="muted">No open bets.</p></div>
+          <p class="tagline" id="sports-tagline"></p>
+          <div id="partner-slot"></div>
         </aside>
       </div>
     </section>
@@ -250,15 +255,89 @@
       </table>
       <button class="btn btn-small" id="reset">Reset account</button>
     </section>
+
+    <!-- SAFER GAMBLING -->
+    <section id="view-safer" class="view" hidden>
+      <h2>Safer gambling</h2>
+      <div class="safer-grid">
+        <div class="safer-card">
+          <h3>Get support</h3>
+          <p><strong>Gambling Help Online</strong>: free, confidential, 24/7.</p>
+          <p class="big-number">1800 858 858</p>
+          <p class="muted">gamblinghelponline.org.au</p>
+          <p><strong>BetStop</strong> is the National Self-Exclusion Register. Registering blocks you from every licensed Australian online and phone bookmaker for 3 months to life.</p>
+          <p class="muted">betstop.gov.au</p>
+        </div>
+        <div class="safer-card">
+          <h3>Reality check</h3>
+          <p>Get a reminder of how long you've played and how this session is going.</p>
+          <label class="field">Remind me every
+            <select id="reality-interval">
+              <option value="0">Off</option>
+              <option value="15">15 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">60 minutes</option>
+            </select>
+          </label>
+          <p class="muted">This session: <span id="session-time">under a minute</span></p>
+        </div>
+        <div class="safer-card">
+          <h3>Take a break</h3>
+          <p>Pause all betting on this site. Breaks can't be cancelled early.</p>
+          <div class="break-buttons">
+            <button class="btn" data-break="24">24 hours</button>
+            <button class="btn" data-break="168">7 days</button>
+            <button class="btn" data-break="720">30 days</button>
+          </div>
+          <p class="muted" id="break-status">No break active.</p>
+        </div>
+        <div class="safer-card">
+          <h3>About this site</h3>
+          <p>Kreios Bet is free to play. Credits can't be bought, withdrawn, transferred or exchanged for prizes.</p>
+          <p>Online casino games such as slots, roulette and blackjack can't legally be offered for real money in Australia. The casino section here is for entertainment only and never links to real-money casinos.</p>
+          <p>The sportsbook uses sample fixtures and odds for practice.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
-    <p>Kreios Bet is a free demo with virtual credits that have no cash value. 18+. If gambling stops being fun, get support at your local problem-gambling helpline.</p>
+    <p class="tagline" id="footer-tagline"></p>
+    <p>For free and confidential support call 1800 858 858 or visit gamblinghelponline.org.au. Self-exclude from all licensed Australian bookmakers at betstop.gov.au.</p>
+    <p>Kreios Bet is a free-to-play demo for people aged 18+. Credits have no cash value.</p>
   </footer>
 
   <div class="toast" id="toast"></div>
 
+  <!-- 18+ age gate -->
+  <div class="overlay" id="agegate" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="agegate-title">
+      <div class="logo">KREIOS<span>BET</span></div>
+      <h2 id="agegate-title">Are you 18 or older?</h2>
+      <p class="muted">This site contains simulated gambling and is only for adults. It's free to play and has no real-money betting.</p>
+      <div class="modal-actions" id="age-buttons">
+        <button class="btn btn-primary" id="age-yes">I'm 18 or older</button>
+        <button class="btn" id="age-no">I'm under 18</button>
+      </div>
+      <p id="age-under" hidden>Sorry, you need to be 18 or older to use this site. If gambling is affecting you or someone you know, Kids Helpline is available on 1800 55 1800.</p>
+    </div>
+  </div>
+
+  <!-- Reality check -->
+  <div class="overlay" id="reality" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reality-title">
+      <h2 id="reality-title">Reality check</h2>
+      <p id="reality-text"></p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="reality-continue">Keep playing</button>
+        <button class="btn" id="reality-stop">Safer gambling options</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
   <script src="js/wallet.js"></script>
+  <script src="js/compliance.js"></script>
   <script src="js/slots.js"></script>
   <script src="js/blackjack.js"></script>
   <script src="js/roulette.js"></script>
