@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kreios Bet — Casino & Sportsbook (Play Money)</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="demo-banner">🎮 Demo site — play money only. No real deposits, wagers or payouts.</div>
+
+  <header class="topbar">
+    <a class="logo" href="#home" data-nav="home">KREIOS<span>BET</span></a>
+    <nav class="nav">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#casino" data-nav="casino">Casino</a>
+      <a href="#sports" data-nav="sports">Sports</a>
+      <a href="#history" data-nav="history">History</a>
+    </nav>
+    <div class="wallet">
+      <span class="balance-label">Balance</span>
+      <span class="balance" id="balance">0</span>
+      <button class="btn btn-small" id="topup">+ Free credits</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="view-home" class="view">
+      <div class="hero">
+        <h1>Casino & Sportsbook</h1>
+        <p>Spin slots, beat the dealer, ride the crash multiplier, or build a parlay. You start with 1,000 free credits.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#casino" data-nav="casino">Play casino</a>
+          <a class="btn" href="#sports" data-nav="sports">Bet on sports</a>
+        </div>
+      </div>
+      <div class="cards">
+        <a class="card" href="#casino/slots" data-game="slots"><div class="card-icon">🎰</div><h3>Slots</h3><p>3 reels, up to 50× payout</p></a>
+        <a class="card" href="#casino/blackjack" data-game="blackjack"><div class="card-icon">🃏</div><h3>Blackjack</h3><p>Blackjack pays 3:2</p></a>
+        <a class="card" href="#casino/roulette" data-game="roulette"><div class="card-icon">🎡</div><h3>Roulette</h3><p>European single-zero wheel</p></a>
+        <a class="card" href="#casino/crash" data-game="crash"><div class="card-icon">🚀</div><h3>Crash</h3><p>Cash out before it busts</p></a>
+        <a class="card" href="#sports" data-nav="sports"><div class="card-icon">⚽</div><h3>Sportsbook</h3><p>Singles & parlays, live results</p></a>
+      </div>
+    </section>
+
+    <!-- CASINO -->
+    <section id="view-casino" class="view" hidden>
+      <div class="tabs" id="casino-tabs">
+        <button data-game="slots" class="active">🎰 Slots</button>
+        <button data-game="blackjack">🃏 Blackjack</button>
+        <button data-game="roulette">🎡 Roulette</button>
+        <button data-game="crash">🚀 Crash</button>
+      </div>
+
+      <!-- Slots -->
+      <div class="game" id="game-slots">
+        <h2>Slots</h2>
+        <div class="reels" id="reels">
+          <div class="reel">🍒</div><div class="reel">🍋</div><div class="reel">🔔</div>
+        </div>
+        <div class="controls">
+          <label>Bet <input type="number" id="slots-bet" min="1" value="10"></label>
+          <button class="btn btn-primary" id="slots-spin">Spin</button>
+        </div>
+        <p class="result" id="slots-result"></p>
+        <details class="paytable"><summary>Paytable</summary>
+          <ul>
+            <li>💎💎💎 — 50×</li><li>7️⃣7️⃣7️⃣ — 25×</li><li>🔔🔔🔔 — 10×</li>
+            <li>🍋🍋🍋 / 🍇🍇🍇 — 5×</li><li>🍒🍒🍒 — 4×</li><li>Any two 🍒 — 2×</li>
+          </ul>
+        </details>
+      </div>
+
+      <!-- Blackjack -->
+      <div class="game" id="game-blackjack" hidden>
+        <h2>Blackjack</h2>
+        <div class="bj-table">
+          <div><h4>Dealer <span id="bj-dealer-score"></span></h4><div class="hand" id="bj-dealer"></div></div>
+          <div><h4>You <span id="bj-player-score"></span></h4><div class="hand" id="bj-player"></div></div>
+        </div>
+        <div class="controls">
+          <label>Bet <input type="number" id="bj-bet" min="1" value="25"></label>
+          <button class="btn btn-primary" id="bj-deal">Deal</button>
+          <button class="btn" id="bj-hit" disabled>Hit</button>
+          <button class="btn" id="bj-stand" disabled>Stand</button>
+          <button class="btn" id="bj-double" disabled>Double</button>
+        </div>
+        <p class="result" id="bj-result"></p>
+      </div>
+
+      <!-- Roulette -->
+      <div class="game" id="game-roulette" hidden>
+        <h2>Roulette</h2>
+        <div class="roulette-top">
+          <div class="wheel" id="wheel"><span id="wheel-num">0</span></div>
+          <div class="controls">
+            <label>Chip <input type="number" id="rl-chip" min="1" value="10"></label>
+            <button class="btn btn-primary" id="rl-spin">Spin</button>
+            <button class="btn" id="rl-clear">Clear bets</button>
+          </div>
+        </div>
+        <p class="muted">Click the board to place chips. Total staked: <strong id="rl-total">0</strong></p>
+        <div class="rl-board" id="rl-board"></div>
+        <div class="rl-outside" id="rl-outside"></div>
+        <p class="result" id="rl-result"></p>
+      </div>
+
+      <!-- Crash -->
+      <div class="game" id="game-crash" hidden>
+        <h2>Crash</h2>
+        <div class="crash-screen" id="crash-screen">
+          <canvas id="crash-canvas" width="800" height="300"></canvas>
+          <div class="crash-mult" id="crash-mult">1.00×</div>
+        </div>
+        <div class="controls">
+          <label>Bet <input type="number" id="crash-bet" min="1" value="10"></label>
+          <label>Auto cash-out <input type="number" id="crash-auto" min="1.01" step="0.01" placeholder="off"></label>
+          <button class="btn btn-primary" id="crash-start">Place bet</button>
+          <button class="btn btn-gold" id="crash-cashout" disabled>Cash out</button>
+        </div>
+        <p class="result" id="crash-result"></p>
+        <div class="crash-history" id="crash-history"></div>
+      </div>
+    </section>
+
+    <!-- SPORTS -->
+    <section id="view-sports" class="view" hidden>
+      <div class="sports-layout">
+        <aside class="sport-list" id="sport-list"></aside>
+        <div class="events">
+          <div class="events-header">
+            <h2 id="sport-title">All sports</h2>
+            <button class="btn btn-small" id="simulate">▶ Play next round of matches</button>
+          </div>
+          <div id="events"></div>
+        </div>
+        <aside class="betslip">
+          <h3>Bet slip</h3>
+          <div class="slip-mode">
+            <button data-mode="single" class="active">Singles</button>
+            <button data-mode="parlay">Parlay</button>
+          </div>
+          <div id="slip-items"><p class="muted">Click odds to add selections.</p></div>
+          <div id="slip-footer"></div>
+          <h3 class="mt">Open bets</h3>
+          <div id="open-bets"><p class="muted">No open bets.</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="view-history" class="view" hidden>
+      <h2>Bet history</h2>
+      <div class="stats" id="stats"></div>
+      <table class="history">
+        <thead><tr><th>Time</th><th>Game</th><th>Details</th><th>Stake</th><th>Return</th></tr></thead>
+        <tbody id="history-body"></tbody>
+      </table>
+      <button class="btn btn-small" id="reset">Reset account</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Kreios Bet is a free demo with virtual credits that have no cash value. 18+. If gambling stops being fun, get support at your local problem-gambling helpline.</p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/wallet.js"></script>
+  <script src="js/slots.js"></script>
+  <script src="js/blackjack.js"></script>
+  <script src="js/roulette.js"></script>
+  <script src="js/crash.js"></script>
+  <script src="js/sports.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
